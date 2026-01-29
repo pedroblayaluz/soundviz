@@ -87,7 +87,14 @@ class WaveformVisualizer(BaseVisualizer):
                 audio_file_to_use = self.audio_file
         
         try:
-            clip.write_videofile(self.output_file, audio=audio_file_to_use)
+            clip.write_videofile(
+                self.output_file,
+                audio=audio_file_to_use,
+                codec='libx264',
+                audio_codec='aac',
+                verbose=False,
+                logger=None
+            )
             print("Done!")
         finally:
             # Clean up temporary file if created

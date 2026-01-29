@@ -5,7 +5,9 @@ Transform audio into mesmerizing visual animations. Make images pulse with the r
 ## Installation
 
 ```bash
-pip install soundviz
+git clone https://github.com/pedroblayaluz/soundviz.git
+cd soundviz
+pip install -e .
 ```
 
 Requires: Python 3.10+ and FFmpeg
