@@ -1,0 +1,59 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "soundviz"
+version = "0.1.0"
+description = "Convert audio files to visual effects driven by audio properties"
+readme = "README.md"
+requires-python = ">=3.8"
+license = {text = "MIT"}
+authors = [
+    {name = "Pedro Blaya Luz", email = "blaya.luz@example.com"}
+]
+keywords = ["audio", "visualization", "video", "waveform"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Topic :: Multimedia :: Sound/Audio",
+    "Topic :: Multimedia :: Video",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.14",
+]
+
+dependencies = [
+    "numpy",
+    "matplotlib",
+    "moviepy",
+    "soundfile",
+]
+
+[project.optional-dependencies]
+dev = [
+    "flake8",
+    "black",
+    "pytest",
+]
+
+[project.scripts]
+soundviz = "soundviz.cli:main"
+
+[tool.setuptools]
+packages = ["soundviz"]
+
+[tool.setuptools.package-data]
+soundviz = ["py.typed"]
+
+[tool.black]
+line-length = 88
+target-version = ["py38", "py39", "py310", "py311", "py312"]
+
+[tool.flake8]
+max-line-length = 88
+exclude = [".git", "__pycache__", "venv", ".venv"]
