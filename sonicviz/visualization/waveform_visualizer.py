@@ -1,48 +1,25 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from moviepy.video.io.ImageSequenceClip import ImageSequenceClip
 import soundfile as sf
+from moviepy.video.io.ImageSequenceClip import ImageSequenceClip
+from .base import BaseVisualizer
+import tempfile
+import os
 
 
-class AudioVisualizer:
-    """Converts audio files to video visualizations with waveform animations."""
+class WaveformVisualizer(BaseVisualizer):
+    """Converts audio files to animated waveform visualizations."""
 
-    def __init__(self, audio_file: str, output_file: str = "output.mp4") -> None:
+    def __init__(self, audio_file: str, output_file: str = "output.mp4", max_duration: float = None) -> None:
         """Initialize the visualizer with input and output paths.
 
         Args:
             audio_file: Path to the input audio file
             output_file: Path for the output video file
+            max_duration: Maximum duration in seconds to process (None for full duration)
         """
-        self.audio_file = audio_file
-        self.output_file = output_file
-        self.window = 2048
-        self.hop_length = self.window // 4
+        super().__init__(audio_file, output_file, max_duration)
         self.history_length = 60
-        self.frames = []
-        self.y = None
-        self.sr = None
-        self.amplitude_history = None
-
-    def load_audio(self) -> None:
-        """Load audio file and prepare it for processing."""
-        self.y, self.sr = sf.read(self.audio_file)
-        if len(self.y.shape) > 1:
-            self.y = self.y[:, 0]
-        duration = len(self.y) / self.sr
-        print(f"Audio loaded. Duration: {duration:.2f}s, Sample rate: {self.sr} Hz")
-
-    def compute_amplitude_history(self) -> None:
-        """Pre-compute amplitude for all frames."""
-        print("Computing amplitude history...")
-        self.amplitude_history = []
-        for i in range(0, len(self.y) - self.window, self.hop_length):
-            slice_data = self.y[i:i + self.window]
-            amplitude = np.sqrt(np.mean(slice_data ** 2))
-            self.amplitude_history.append(amplitude)
-
-        max_amplitude = max(self.amplitude_history)
-        self.amplitude_history = [a / max_amplitude for a in self.amplitude_history]
 
     def generate_frame(self, current_amplitudes: list) -> np.ndarray:
         """Generate a single frame from amplitude data.
@@ -93,12 +70,29 @@ class AudioVisualizer:
         print("Creating video...")
         fps = self.sr / self.hop_length
         clip = ImageSequenceClip(self.frames, fps=fps)
-        clip.write_videofile(self.output_file, audio=self.audio_file)
-        print("Done!")
-
-    def run(self) -> None:
-        """Execute the complete visualization pipeline."""
-        self.load_audio()
-        self.compute_amplitude_history()
-        self.generate_frames()
-        self.create_video()
+        
+        # If max_duration was specified, save trimmed audio to temporary file
+        audio_file_to_use = self.audio_file
+        temp_audio = None
+        
+        if self.max_duration is not None:
+            # Create temporary audio file with trimmed content
+            temp_fd, temp_audio = tempfile.mkstemp(suffix='.wav')
+            os.close(temp_fd)
+            try:
+                sf.write(temp_audio, self.y, self.sr)
+                audio_file_to_use = temp_audio
+            except Exception as e:
+                print(f"Warning: Could not write temp audio file: {e}")
+                audio_file_to_use = self.audio_file
+        
+        try:
+            clip.write_videofile(self.output_file, audio=audio_file_to_use)
+            print("Done!")
+        finally:
+            # Clean up temporary file if created
+            if temp_audio and os.path.exists(temp_audio):
+                try:
+                    os.remove(temp_audio)
+                except:
+                    pass

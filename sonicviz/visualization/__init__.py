@@ -1,5 +1,7 @@
 """Audio visualization module."""
 
-from .visualizer import AudioVisualizer
+from .base import BaseVisualizer
+from .waveform_visualizer import WaveformVisualizer
+from .image_animator import ImageAnimatorVisualizer
 
-__all__ = ["AudioVisualizer"]
+__all__ = ["BaseVisualizer", "WaveformVisualizer", "ImageAnimatorVisualizer"]

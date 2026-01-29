@@ -2,13 +2,33 @@
 
 import sys
 from pathlib import Path
-from ..visualization import AudioVisualizer
+from ..visualization import WaveformVisualizer, ImageAnimatorVisualizer
 
 
 class BatchProcessor:
     """Handles batch processing of audio files to video visualizations."""
 
     AUDIO_EXTENSIONS = {".mp3", ".wav", ".flac", ".ogg", ".m4a", ".aiff"}
+    VISUALIZER_TYPES = {
+        "waveform": WaveformVisualizer,
+        "image": ImageAnimatorVisualizer,
+    }
+
+    def __init__(self, visualizer_type: str = "waveform", max_duration: float = None) -> None:
+        """Initialize the batch processor.
+
+        Args:
+            visualizer_type: Type of visualizer to use ("waveform" or "image")
+            max_duration: Maximum duration in seconds to process (None for full duration)
+        """
+        if visualizer_type not in self.VISUALIZER_TYPES:
+            raise ValueError(
+                f"Unknown visualizer type: {visualizer_type}. "
+                f"Available types: {', '.join(self.VISUALIZER_TYPES.keys())}"
+            )
+        self.visualizer_type = visualizer_type
+        self.visualizer_class = self.VISUALIZER_TYPES[visualizer_type]
+        self.max_duration = max_duration
 
     def process_single_file(
         self, audio_file: Path, output_file: str = None
@@ -23,8 +43,14 @@ class BatchProcessor:
             output_file = f"{audio_file.stem}_output.mp4"
 
         print(f"Processing single file: {audio_file}")
+        print(f"Visualizer type: {self.visualizer_type}")
+        if self.max_duration:
+            print(f"Max duration: {self.max_duration}s")
         try:
-            visualizer = AudioVisualizer(str(audio_file), str(output_file))
+            if self.visualizer_class == ImageAnimatorVisualizer:
+                visualizer = self.visualizer_class(str(audio_file), None, str(output_file), max_duration=self.max_duration)
+            else:
+                visualizer = self.visualizer_class(str(audio_file), str(output_file), max_duration=self.max_duration)
             visualizer.run()
             print(f"✓ Successfully saved to: {output_file}")
         except Exception as e:
@@ -50,6 +76,9 @@ class BatchProcessor:
         # Create output folder if it doesn't exist
         output_folder.mkdir(parents=True, exist_ok=True)
         print(f"Processing folder: {input_folder}")
+        print(f"Visualizer type: {self.visualizer_type}")
+        if self.max_duration:
+            print(f"Max duration: {self.max_duration}s")
         print(f"Output folder: {output_folder}\n")
 
         # Find all audio files
@@ -72,7 +101,10 @@ class BatchProcessor:
             try:
                 print(f"[{idx}/{len(audio_files)}] Processing: {audio_file.name}")
                 output_file = output_folder / f"{audio_file.stem}.mp4"
-                visualizer = AudioVisualizer(str(audio_file), str(output_file))
+                if self.visualizer_class == ImageAnimatorVisualizer:
+                    visualizer = self.visualizer_class(str(audio_file), None, str(output_file), max_duration=self.max_duration)
+                else:
+                    visualizer = self.visualizer_class(str(audio_file), str(output_file), max_duration=self.max_duration)
                 visualizer.run()
                 print(f"✓ Completed: {output_file}\n")
                 successful += 1
@@ -100,3 +132,4 @@ class BatchProcessor:
         if failed > 0:
             print(f"  Failed: {failed}/{total}")
         print(f"  Output folder: {output_folder}")
+

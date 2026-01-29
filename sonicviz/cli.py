@@ -9,7 +9,6 @@ class VisualizerApp:
 
     def __init__(self) -> None:
         self.parser = self._create_parser()
-        self.processor = BatchProcessor()
 
     def _create_parser(self) -> argparse.ArgumentParser:
         """Create and configure the argument parser."""
@@ -18,13 +17,21 @@ class VisualizerApp:
             formatter_class=argparse.RawDescriptionHelpFormatter,
             epilog="""
 Examples:
-  # Process single file
+  # Process single file with waveform visualizer (default)
   python cli.py audio.mp3
   python cli.py audio.mp3 -o output.mp4
 
-  # Process folder
+  # Process single file with image animator
+  python cli.py audio.mp3 -t image
+  python cli.py audio.mp3 -t image -o output.mp4
+
+  # Process folder with waveform visualizer
   python cli.py /path/to/audio/folder
   python cli.py /path/to/audio/folder -o /path/to/output/folder
+
+  # Process folder with image animator
+  python cli.py /path/to/audio/folder -t image
+  python cli.py /path/to/audio/folder -t image -o /path/to/output/folder
             """
         )
         parser.add_argument("input", help="Input audio file or folder")
@@ -32,17 +39,30 @@ Examples:
             "-o", "--output",
             help="Output file (for single file mode) or folder (for batch mode)"
         )
+        parser.add_argument(
+            "-t", "--type",
+            default="waveform",
+            choices=["waveform", "image"],
+            help="Visualizer type (default: waveform)"
+        )
+        parser.add_argument(
+            "-d", "--duration",
+            type=float,
+            default=None,
+            help="Maximum duration in seconds (useful for testing)"
+        )
         return parser
 
     def run(self, args: list = None) -> None:
         """Main entry point for the application."""
         parsed_args = self.parser.parse_args(args)
         input_path = Path(parsed_args.input)
+        processor = BatchProcessor(visualizer_type=parsed_args.type, max_duration=parsed_args.duration)
 
         if input_path.is_file():
-            self.processor.process_single_file(input_path, parsed_args.output)
+            processor.process_single_file(input_path, parsed_args.output)
         elif input_path.is_dir():
-            self.processor.process_folder(input_path, parsed_args.output)
+            processor.process_folder(input_path, parsed_args.output)
         else:
             print(f"Error: {input_path} is not a valid file or directory")
             sys.exit(1)

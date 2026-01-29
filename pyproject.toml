@@ -8,7 +8,7 @@ version = "0.1.0"
 description = "Convert audio files to visual effects driven by audio properties"
 readme = "README.md"
 requires-python = ">=3.8"
-license = {text = "MIT"}
+license = "MIT"
 authors = [
     {name = "Pedro Blaya Luz", email = "blaya.luz@example.com"}
 ]
@@ -42,10 +42,10 @@ dev = [
 ]
 
 [project.scripts]
-soundviz = "soundviz.cli:main"
+soundviz = "sonicviz.cli:main"
 
 [tool.setuptools]
-packages = ["soundviz"]
+packages = ["sonicviz"]
 
 [tool.setuptools.package-data]
 soundviz = ["py.typed"]
