@@ -32,12 +32,12 @@ class BaseVisualizer(ABC):
         if len(self.y.shape) > 1:
             # Convert stereo to mono by averaging both channels
             self.y = np.mean(self.y, axis=1)
-        
+
         # Trim to max_duration if specified
         if self.max_duration is not None:
             max_samples = int(self.sr * self.max_duration)
             self.y = self.y[:max_samples]
-        
+
         duration = len(self.y) / self.sr
         print(f"Audio loaded. Duration: {duration:.2f}s, Sample rate: {self.sr} Hz")
 

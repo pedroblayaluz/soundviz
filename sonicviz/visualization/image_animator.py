@@ -167,11 +167,11 @@ class ImageAnimatorVisualizer(BaseVisualizer):
         print("Creating video...")
         fps = self.sr / self.hop_length
         clip = ImageSequenceClip(self.frames, fps=fps)
-        
+
         # If max_duration was specified, save trimmed audio to temporary file
         audio_file_to_use = self.audio_file
         temp_audio = None
-        
+
         if self.max_duration is not None:
             # Create temporary audio file with trimmed content
             temp_fd, temp_audio = tempfile.mkstemp(suffix='.wav')
@@ -182,7 +182,7 @@ class ImageAnimatorVisualizer(BaseVisualizer):
             except Exception as e:
                 print(f"Warning: Could not write temp audio file: {e}")
                 audio_file_to_use = self.audio_file
-        
+
         try:
             clip.write_videofile(
                 self.output_file,
