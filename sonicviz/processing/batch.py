@@ -48,9 +48,15 @@ class BatchProcessor:
             print(f"Max duration: {self.max_duration}s")
         try:
             if self.visualizer_class == ImageAnimatorVisualizer:
-                visualizer = self.visualizer_class(str(audio_file), None, str(output_file), max_duration=self.max_duration)
+                visualizer = self.visualizer_class(
+                    str(audio_file), None, str(output_file),
+                    max_duration=self.max_duration
+                )
             else:
-                visualizer = self.visualizer_class(str(audio_file), str(output_file), max_duration=self.max_duration)
+                visualizer = self.visualizer_class(
+                    str(audio_file), str(output_file),
+                    max_duration=self.max_duration
+                )
             visualizer.run()
             print(f"✓ Successfully saved to: {output_file}")
         except Exception as e:
@@ -102,9 +108,15 @@ class BatchProcessor:
                 print(f"[{idx}/{len(audio_files)}] Processing: {audio_file.name}")
                 output_file = output_folder / f"{audio_file.stem}.mp4"
                 if self.visualizer_class == ImageAnimatorVisualizer:
-                    visualizer = self.visualizer_class(str(audio_file), None, str(output_file), max_duration=self.max_duration)
+                    visualizer = self.visualizer_class(
+                        str(audio_file), None, str(output_file),
+                        max_duration=self.max_duration
+                    )
                 else:
-                    visualizer = self.visualizer_class(str(audio_file), str(output_file), max_duration=self.max_duration)
+                    visualizer = self.visualizer_class(
+                        str(audio_file), str(output_file),
+                        max_duration=self.max_duration
+                    )
                 visualizer.run()
                 print(f"✓ Completed: {output_file}\n")
                 successful += 1
@@ -132,4 +144,3 @@ class BatchProcessor:
         if failed > 0:
             print(f"  Failed: {failed}/{total}")
         print(f"  Output folder: {output_folder}")
-
