@@ -22,6 +22,14 @@ Generate an animated visualization from audio and a static image:
 soundviz --type image --input audio.wav --image image.png --output animation.mp4
 ```
 
+Or process an entire folder of audio files with corresponding images:
+
+```bash
+soundviz input_folder --type image --output output_folder
+```
+
+**Note:** For folder processing with the image animator, each audio file must have a corresponding PNG image with the same name (e.g., `song.mp3` paired with `song.png`).
+
 [Image animation example - GIF/Video placeholder]
 
 ## License
