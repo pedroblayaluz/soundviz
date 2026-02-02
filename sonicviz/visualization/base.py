@@ -30,7 +30,8 @@ class BaseVisualizer(ABC):
         """Load audio file and prepare it for processing."""
         self.y, self.sr = sf.read(self.audio_file)
         if len(self.y.shape) > 1:
-            self.y = self.y[:, 0]
+            # Convert stereo to mono by averaging both channels
+            self.y = np.mean(self.y, axis=1)
         
         # Trim to max_duration if specified
         if self.max_duration is not None:
