@@ -187,8 +187,8 @@ class ImageAnimatorVisualizer(BaseVisualizer):
             clip.write_videofile(
                 self.output_file,
                 audio=audio_file_to_use,
-                codec='mpeg4',
-                audio_codec='libmp3lame'
+                codec='libx264',
+                audio_codec='aac'
             )
             print("Done!")
         finally:
