@@ -90,8 +90,8 @@ class WaveformVisualizer(BaseVisualizer):
             clip.write_videofile(
                 self.output_file,
                 audio=audio_file_to_use,
-                codec='libx264',
-                audio_codec='aac'
+                codec='mpeg4',
+                audio_codec='libmp3lame'
             )
             print("Done!")
         finally:
