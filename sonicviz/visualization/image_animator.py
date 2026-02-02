@@ -186,7 +186,9 @@ class ImageAnimatorVisualizer(BaseVisualizer):
         try:
             clip.write_videofile(
                 self.output_file,
-                audio=audio_file_to_use
+                audio=audio_file_to_use,
+                codec='libx264',
+                audio_codec='aac'
             )
             print("Done!")
         finally:
@@ -194,5 +196,5 @@ class ImageAnimatorVisualizer(BaseVisualizer):
             if temp_audio and os.path.exists(temp_audio):
                 try:
                     os.remove(temp_audio)
-                except:
+                except OSError:
                     pass

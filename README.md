@@ -32,6 +32,20 @@ soundviz input_folder --type image --output output_folder
 
 [Image animation example - GIF/Video placeholder]
 
+### Waveform Visualizer
+
+Generate an animated waveform visualization from audio:
+
+```bash
+soundviz --type waveform --input audio.wav --output animation.mp4
+```
+
+Or process a folder of audio files:
+
+```bash
+soundviz input_folder --type waveform --output output_folder
+```
+
 ## License
 
 MIT License
